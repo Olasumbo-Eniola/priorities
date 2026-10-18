@@ -1,0 +1,4 @@
+.modal-overlay {
+  z-index: 80;
+  pointer-events: auto;
+}

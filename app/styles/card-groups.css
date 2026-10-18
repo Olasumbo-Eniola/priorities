@@ -1,0 +1,13 @@
+.period-card-groups {
+  display: grid;
+  gap: 28px;
+  min-width: 0;
+}
+
+.period-card-section {
+  min-width: 0;
+}
+
+.period-card-section > .period-list-label {
+  margin: 0 0 12px;
+}

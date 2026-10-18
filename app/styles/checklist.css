@@ -1,0 +1,5 @@
+.checklist-item-heading { display: flex; align-items: center; gap: 10px; }
+.checklist-title { flex: 1; font-size: 14px; line-height: 1.6; }
+.checklist-item-heading input[type="checkbox"] { flex-shrink: 0; }
+.checklist-item-actions { display: flex; gap: 4px; flex-shrink: 0; }
+.checklist-item-actions .icon-button { width: 28px; height: 28px; flex-shrink: 0; }

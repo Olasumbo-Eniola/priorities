@@ -1,0 +1,94 @@
+.attachment-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.attachment-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-text-secondary);
+}
+.attachment-link-form {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  background: var(--color-surface-subtle);
+}
+.attachment-link-form label {
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--color-text-secondary);
+}
+.attachment-link-form input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border-control);
+  border-radius: 6px;
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+}
+.attachment-link-form > div {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.attachment-link-form > p {
+  color: var(--color-danger);
+  font-size: 12px;
+}
+.attachment-chips {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  gap: 7px;
+}
+.attachment-link-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 5px 5px 5px 9px;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 999px;
+  background: var(--color-surface-subtle);
+  color: var(--color-text-muted);
+}
+.attachment-link-chip > svg {
+  flex-shrink: 0;
+}
+.attachment-link-chip a {
+  min-width: 0;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  font-weight: 500;
+  text-decoration: none;
+}
+.attachment-link-chip a:hover {
+  color: var(--color-text);
+  text-decoration: underline;
+}
+.attachment-link-chip .attachment-chip-remove {
+  width: 20px;
+  height: 20px;
+  min-width: 20px;
+  padding: 0;
+  border-radius: 50%;
+  color: var(--color-text-muted);
+}
+.attachment-link-chip .attachment-chip-remove:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-text);
+}

@@ -1,0 +1,54 @@
+.vaul-drawer-content {
+  position: fixed;
+  z-index: 71;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(570px, 100vw);
+  max-width: 100vw;
+  overflow-x: clip;
+  outline: none;
+}
+
+.drawer-content,
+.drawer-section,
+.properties,
+.checklist-item,
+.comment,
+.comment > div {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.placement-row,
+.task-actions {
+  flex-wrap: wrap;
+}
+
+.comment p {
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 450px) {
+  .task-actions > .primary,
+  .task-actions > .secondary {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+}
+
+.drawer-dialog-title {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.title-required {
+  color: var(--color-danger);
+}

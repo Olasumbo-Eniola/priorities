@@ -1,0 +1,184 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedInAs(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    function validText(value, maximum) {
+      return value is string && value.size() <= maximum;
+    }
+
+    function validProfile(data) {
+      return data.keys().hasAll([
+          'email', 'displayName', 'timezone', 'reviewTime', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'email', 'displayName', 'timezone', 'reviewTime', 'createdAt', 'updatedAt'
+        ])
+        && validText(data.email, 320)
+        && validText(data.displayName, 120)
+        && validText(data.timezone, 100)
+        && validText(data.reviewTime, 5)
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function validTask(data) {
+      return data.keys().hasAll([
+          'title', 'description', 'priority', 'deadline', 'placements',
+          'blocked', 'completed', 'checklistTotal', 'checklistCompleted',
+          'commentCount', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'title', 'description', 'priority', 'deadline', 'placements',
+          'blocked', 'completed', 'checklistTotal', 'checklistCompleted',
+          'commentCount', 'createdAt', 'updatedAt', 'selectedStatus', 'labels', 'deletedAt'
+        ])
+        && (!('deletedAt' in data) || data.deletedAt == null || data.deletedAt is timestamp)
+        && (!('labels' in data) || (data.labels is list
+          && data.labels.size() <= 6
+          && data.labels.hasOnly(['gray', 'red', 'amber', 'green', 'blue', 'pink'])
+          && data.labels.toSet().size() == data.labels.size()))
+        && (!('selectedStatus' in data) || data.selectedStatus in ['Not started', 'In progress', 'Blocked', 'Completed'])
+        && validText(data.title, 160)
+        && validText(data.description, 2000)
+        && data.priority in ['urgent', 'high', 'medium', 'low']
+        && (data.deadline == null || validText(data.deadline, 10))
+        && data.placements is map
+        && data.placements.keys().hasOnly(['day', 'week', 'month'])
+        && data.blocked is bool
+        && data.completed is bool
+        && data.checklistTotal is int
+        && data.checklistCompleted is int
+        && data.commentCount is int
+        && data.checklistTotal >= 0
+        && data.checklistCompleted >= 0
+        && data.checklistCompleted <= data.checklistTotal
+        && data.commentCount >= 0
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function validChecklistItem(data) {
+      return data.keys().hasAll([
+          'title', 'note', 'done', 'position', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'title', 'note', 'done', 'position', 'createdAt', 'updatedAt'
+        ])
+        && validText(data.title, 300)
+        && validText(data.note, 2000)
+        && data.done is bool
+        && data.position is int
+        && data.position >= 0
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function validComment(data) {
+      return data.keys().hasAll(['text', 'createdAt'])
+        && data.keys().hasOnly(['text', 'createdAt'])
+        && validText(data.text, 2000)
+        && data.text.size() > 0
+        && data.createdAt is timestamp;
+    }
+
+    function validReview(data) {
+      return data.keys().hasAll(['localDate', 'timezone', 'completedAt', 'updatedAt'])
+        && data.keys().hasOnly(['localDate', 'timezone', 'completedAt', 'updatedAt', 'reflection', 'takeForward'])
+        && (!('reflection' in data) || validText(data.reflection, 5000))
+        && (!('takeForward' in data) || validText(data.takeForward, 5000))
+        && validText(data.localDate, 10)
+        && validText(data.timezone, 100)
+        && (data.completedAt == null || data.completedAt is timestamp)
+        && data.updatedAt is timestamp;
+    }
+
+    function validReviewEntry(data) {
+      return data.keys().hasAll([
+          'taskId', 'taskTitle', 'progressPercent', 'movedForward', 'blocker', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'taskId', 'taskTitle', 'progressPercent', 'movedForward', 'blocker', 'updatedAt'
+        ])
+        && validText(data.taskId, 128)
+        && validText(data.taskTitle, 160)
+        && data.progressPercent is int
+        && data.progressPercent >= 0
+        && data.progressPercent <= 100
+        && validText(data.movedForward, 2000)
+        && validText(data.blocker, 2000)
+        && data.updatedAt is timestamp;
+    }
+
+    match /users/{uid} {
+      allow read: if signedInAs(uid);
+      allow create: if signedInAs(uid) && validProfile(request.resource.data);
+      allow update: if signedInAs(uid)
+        && validProfile(request.resource.data)
+        && request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if false;
+
+      match /labels/{labelId} {
+        allow read: if signedInAs(uid);
+        allow create, update: if signedInAs(uid)
+          && labelId in ['gray', 'red', 'amber', 'green', 'blue', 'pink']
+          && request.resource.data.keys().hasAll(['name'])
+          && request.resource.data.keys().hasOnly(['name'])
+          && validText(request.resource.data.name, 40)
+          && request.resource.data.name.size() > 0;
+        allow delete: if false;
+      }
+
+      match /tasks/{taskId} {
+        allow read: if signedInAs(uid);
+        allow create: if signedInAs(uid) && validTask(request.resource.data);
+        allow update: if signedInAs(uid)
+          && validTask(request.resource.data)
+          && request.resource.data.createdAt == resource.data.createdAt;
+        allow delete: if signedInAs(uid);
+
+        match /checklistItems/{itemId} {
+          allow read: if signedInAs(uid);
+          allow create: if signedInAs(uid) && validChecklistItem(request.resource.data);
+          allow update: if signedInAs(uid)
+            && validChecklistItem(request.resource.data)
+            && request.resource.data.createdAt == resource.data.createdAt;
+          allow delete: if signedInAs(uid);
+        }
+
+        match /comments/{commentId} {
+          allow read: if signedInAs(uid);
+          allow create: if signedInAs(uid) && validComment(request.resource.data);
+          allow update, delete: if false;
+        }
+        match /links/{linkId} {
+          allow read, delete: if signedInAs(uid);
+          allow create: if signedInAs(uid)
+            && request.resource.data.keys().hasAll(['name', 'url', 'createdAt'])
+            && request.resource.data.keys().hasOnly(['name', 'url', 'createdAt'])
+            && validText(request.resource.data.name, 160)
+            && validText(request.resource.data.url, 2048)
+            && request.resource.data.url.matches('https?://[^ ].*')
+            && request.resource.data.createdAt is timestamp;
+          allow update: if false;
+        }
+      }
+
+      match /reviews/{localDate} {
+        allow read: if signedInAs(uid);
+        allow create, update: if signedInAs(uid) && validReview(request.resource.data);
+        allow delete: if signedInAs(uid);
+
+        match /entries/{taskId} {
+          allow read: if signedInAs(uid);
+          allow create, update: if signedInAs(uid)
+            && validReviewEntry(request.resource.data);
+          allow delete: if signedInAs(uid);
+        }
+      }
+    }
+  }
+}
