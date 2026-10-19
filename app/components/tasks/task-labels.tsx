@@ -4,11 +4,30 @@ import { Icon } from "../ui/app-icon";
 import { InlineText } from "../ui/inline-text";
 import "../../styles/labels.css";
 
-export function LabelChips({ selected, labels }: { selected: string[]; labels: TaskLabel[] }) {
+export function LabelChips({ selected, labels, maxVisible }: {
+  selected: string[];
+  labels: TaskLabel[];
+  maxVisible?: number;
+}) {
   const active = labels.filter(label => selected.includes(label.id));
-  return <span className="label-chips">{active.length ? active.map(label =>
-    <span key={label.id} className={`task-label label-${label.id}`}>{label.name}</span>,
-  ) : <span className="labels-empty">—</span>}</span>;
+  const visible = maxVisible === undefined ? active : active.slice(0, maxVisible);
+  const hidden = active.slice(visible.length);
+
+  return <span
+    className={`label-chips${maxVisible === undefined ? "" : " label-chips-limited"}`}
+    title={active.length ? active.map(label => label.name).join(", ") : undefined}
+  >
+    {active.length ? <>
+      {visible.map(label =>
+        <span key={label.id} className={`task-label label-${label.id}`} title={label.name}>{label.name}</span>,
+      )}
+      {hidden.length ? <span
+        className="label-overflow"
+        aria-label={`${hidden.length} more ${hidden.length === 1 ? "label" : "labels"}: ${hidden.map(label => label.name).join(", ")}`}
+        title={hidden.map(label => label.name).join(", ")}
+      >…</span> : null}
+    </> : <span className="labels-empty">—</span>}
+  </span>;
 }
 
 function LabelOption({ label, checked, onToggle, onRename }: {

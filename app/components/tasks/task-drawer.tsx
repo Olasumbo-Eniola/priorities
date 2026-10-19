@@ -135,6 +135,13 @@ export function TaskDrawer({
             <input
               type="date"
               value={task.deadline}
+              onClick={(event) => {
+                try {
+                  event.currentTarget.showPicker();
+                } catch {
+                  // Browsers without an imperative picker keep their native behavior.
+                }
+              }}
               onChange={(event) =>
                 onUpdate({ ...task, deadline: event.target.value })
               }

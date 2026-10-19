@@ -29,14 +29,6 @@
   overflow-wrap: anywhere;
 }
 
-@media (max-width: 450px) {
-  .task-actions > .primary,
-  .task-actions > .secondary {
-    flex: 1 1 auto;
-    min-width: 0;
-  }
-}
-
 .drawer-dialog-title {
   position: absolute;
   width: 1px;
@@ -51,4 +43,100 @@
 
 .title-required {
   color: var(--color-danger);
+}
+
+@media (max-width: 600px) {
+  .vaul-drawer-content {
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100dvh;
+    max-height: 100dvh;
+    border-radius: 0;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .vaul-drawer-content .drawer-top {
+    padding: calc(14px + env(safe-area-inset-top)) 18px 14px;
+  }
+
+  .vaul-drawer-content .drawer-content {
+    padding: 20px 18px calc(28px + env(safe-area-inset-bottom));
+  }
+
+  .drawer .title-input {
+    margin-top: 14px;
+    font-size: 22px;
+    line-height: 1.35;
+  }
+
+  .properties {
+    gap: 18px;
+  }
+
+  .properties > label,
+  .properties > div {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+    gap: 8px;
+  }
+
+  .drawer .properties input,
+  .drawer .properties select {
+    width: 100%;
+    min-height: 42px;
+  }
+
+  .task-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .task-actions > .primary,
+  .task-actions > .secondary {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .placement-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 16px;
+  }
+
+  .placement-row label {
+    min-height: 32px;
+  }
+
+  .checklist-item-heading {
+    align-items: flex-start;
+  }
+
+  .checklist-item-heading > input[type="checkbox"] {
+    margin-top: 4px;
+  }
+
+  .drawer .inline-form {
+    align-items: stretch;
+  }
+
+  .drawer .inline-form > .icon-button {
+    width: 42px;
+    height: 42px;
+  }
+
+  .attachment-link-form > div {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 380px) {
+  .task-actions {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .placement-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }

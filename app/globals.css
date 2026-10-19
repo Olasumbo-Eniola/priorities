@@ -1271,6 +1271,15 @@ input[type="checkbox"] {
   }
 }
 
+/* iOS Safari zooms focused form controls whose computed text is below 16px. */
+@media (max-width: 760px) {
+  body input:not([type="checkbox"]):not([type="radio"]):not(.title-input),
+  body textarea:not([readonly]),
+  body select:not([multiple]) {
+    font-size: 16px !important;
+  }
+}
+
 /* Neutral surfaces, readable typography, and semantic progress colors. */
 @theme inline {
   --font-sans: var(--font-poppins);
@@ -2334,6 +2343,12 @@ select.app-select {
   }
 }
 
+@media (max-width: 768px) {
+  .summary-complete-count {
+    display: none;
+  }
+}
+
 @media (max-width: 450px) {
   .summaries {
     grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -2358,8 +2373,5 @@ select.app-select {
   }
   .summary-ring > strong {
     font-size: 12px;
-  }
-  .summary-complete-count {
-    display: none;
   }
 }

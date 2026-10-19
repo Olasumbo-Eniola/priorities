@@ -112,7 +112,7 @@ export function TaskList({
                           </div>
                         </td>
                         <td>
-                          <LabelChips selected={task.labels ?? []} labels={labels} />
+                          <LabelChips selected={task.labels ?? []} labels={labels} maxVisible={2} />
                         </td>
                         <td>
                           <span className="period-list-checklist">

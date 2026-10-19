@@ -1,4 +1,7 @@
 .label-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.label-chips-limited { flex-wrap: nowrap; min-width: 0; overflow: hidden; white-space: nowrap; }
+.label-chips-limited .task-label { display: block; flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.label-overflow { display: inline-grid; width: 24px; height: 24px; flex: 0 0 24px; place-items: center; border-radius: 5px; background: var(--color-surface-muted); color: var(--color-text-muted); font-size: 14px; font-weight: 700; line-height: 1; }
 .task-label { display: inline-flex; padding: 4px 9px; border-radius: 5px; font-size: 11px; font-weight: 500; line-height: 1.5; overflow-wrap: anywhere; max-width: 100%; }
 .label-gray { background: var(--color-surface-muted); color: var(--color-text-secondary); }
 .label-red { background: var(--color-danger-soft); color: var(--color-danger); }

@@ -16,6 +16,7 @@ import { Icon } from "./components/ui/app-icon";
 import { useCurrentTime } from "./hooks/use-current-time";
 import { useDailyReview } from "./hooks/use-daily-review";
 import { useLabels } from "./hooks/use-labels";
+import { useMobileLayout } from "./hooks/use-mobile-layout";
 import { useTaskDraft } from "./hooks/use-task-draft";
 import { useTasks } from "./hooks/use-tasks";
 import { useToast } from "./hooks/use-toast";
@@ -38,12 +39,14 @@ export default function Dashboard({
   onSignOut: () => Promise<void>;
 }) {
   const now = useCurrentTime();
+  const mobileLayout = useMobileLayout();
   const [dataError, setDataError] = useState("");
   const [periodFilter, setPeriodFilter] = useState<Period | null>(null);
   const [section, setSection] = useState<"priorities" | "general" | "reviews">(
     "priorities",
   );
   const [view, setView] = useState<"cards" | "list">("list");
+  const activeView = mobileLayout ? "cards" : view;
   const [navigationOpen, setNavigationOpen] = useState(false);
   const [selected, setSelected] = useState<string | null>(null);
   const [pendingTaskDelete, setPendingTaskDelete] = useState<Task | null>(null);
@@ -307,9 +310,11 @@ export default function Dashboard({
                               <small>{value !== null ? "%" : ""}</small>
                             </strong>
                           </span>
-                          <span className="summary-complete-count">
-                            {completedCount} of {items.length} complete
-                          </span>
+                          {!mobileLayout && (
+                            <span className="summary-complete-count">
+                              {completedCount} of {items.length} complete
+                            </span>
+                          )}
                         </div>
                       </button>
                     );
@@ -332,35 +337,37 @@ export default function Dashboard({
                       <span>{displayedTasks.length}</span>
                     </h2>
                   </div>
-                  <div className="list-controls">
-                    <div
-                      className="view-toggle"
-                      data-view={view}
-                      role="group"
-                      aria-label="Task layout"
-                    >
-                      {(["cards", "list"] as const).map((viewOption) => (
-                        <button
-                          key={viewOption}
-                          aria-pressed={view === viewOption}
-                          title={
-                            viewOption === "cards" ? "Card view" : "List view"
-                          }
-                          onClick={() => setView(viewOption)}
-                        >
-                          <Icon
-                            name={viewOption === "cards" ? "grid" : "list"}
-                            size={16}
-                          />
-                          <span>
-                            {viewOption === "cards" ? "Cards" : "List"}
-                          </span>
-                        </button>
-                      ))}
+                  {!mobileLayout && (
+                    <div className="list-controls">
+                      <div
+                        className="view-toggle"
+                        data-view={view}
+                        role="group"
+                        aria-label="Task layout"
+                      >
+                        {(["list", "cards"] as const).map((viewOption) => (
+                          <button
+                            key={viewOption}
+                            aria-pressed={view === viewOption}
+                            title={
+                              viewOption === "cards" ? "Card view" : "List view"
+                            }
+                            onClick={() => setView(viewOption)}
+                          >
+                            <Icon
+                              name={viewOption === "cards" ? "grid" : "list"}
+                              size={16}
+                            />
+                            <span>
+                              {viewOption === "cards" ? "Cards" : "List"}
+                            </span>
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
-                {view === "list" ? (
+                {activeView === "list" ? (
                   <TaskList
                     onDelete={setPendingTaskDelete}
                     tasks={tasks}
